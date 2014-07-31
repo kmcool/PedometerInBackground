@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7440773E19893D5600891666 /* background.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7440773D19893D5600891666 /* background.wav */; };
+		749CBB661989902400AACB45 /* FCFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 749CBB651989902400AACB45 /* FCFileManager.m */; };
 		74F036DA19893DB9001A010A /* background.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7440773D19893D5600891666 /* background.wav */; };
 		CCEFF7191886346E00F9ACB2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCEFF7181886346E00F9ACB2 /* Foundation.framework */; };
 		CCEFF71B1886346E00F9ACB2 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCEFF71A1886346E00F9ACB2 /* CoreGraphics.framework */; };
@@ -38,23 +39,25 @@
 
 /* Begin PBXFileReference section */
 		7440773D19893D5600891666 /* background.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = background.wav; sourceTree = "<group>"; };
-		CCEFF7151886346E00F9ACB2 /* step.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = step.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		749CBB641989902400AACB45 /* FCFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FCFileManager.h; sourceTree = "<group>"; };
+		749CBB651989902400AACB45 /* FCFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FCFileManager.m; sourceTree = "<group>"; };
+		CCEFF7151886346E00F9ACB2 /* LifeTrackr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeTrackr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCEFF7181886346E00F9ACB2 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CCEFF71A1886346E00F9ACB2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		CCEFF71C1886346E00F9ACB2 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		CCEFF7201886346E00F9ACB2 /* step-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "step-Info.plist"; sourceTree = "<group>"; };
+		CCEFF7201886346E00F9ACB2 /* LifeTrackr-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LifeTrackr-Info.plist"; sourceTree = "<group>"; };
 		CCEFF7221886346E00F9ACB2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CCEFF7241886346E00F9ACB2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		CCEFF7261886346E00F9ACB2 /* step-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "step-Prefix.pch"; sourceTree = "<group>"; };
+		CCEFF7261886346E00F9ACB2 /* LifeTrackr-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LifeTrackr-Prefix.pch"; sourceTree = "<group>"; };
 		CCEFF7271886346E00F9ACB2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CCEFF7281886346E00F9ACB2 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CCEFF72B1886346E00F9ACB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CCEFF72D1886346E00F9ACB2 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		CCEFF72E1886346E00F9ACB2 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		CCEFF7301886346E00F9ACB2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		CCEFF7361886346F00F9ACB2 /* stepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = stepTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCEFF7361886346F00F9ACB2 /* LifeTrackrTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LifeTrackrTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCEFF7371886346F00F9ACB2 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		CCEFF73F1886346F00F9ACB2 /* stepTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "stepTests-Info.plist"; sourceTree = "<group>"; };
+		CCEFF73F1886346F00F9ACB2 /* LifeTrackrTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LifeTrackrTests-Info.plist"; sourceTree = "<group>"; };
 		CCEFF7411886346F00F9ACB2 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CCEFF7431886346F00F9ACB2 /* stepTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = stepTests.m; sourceTree = "<group>"; };
 		CCEFF74D1886349900F9ACB2 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -107,8 +110,8 @@
 		CCEFF7161886346E00F9ACB2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CCEFF7151886346E00F9ACB2 /* step.app */,
-				CCEFF7361886346F00F9ACB2 /* stepTests.xctest */,
+				CCEFF7151886346E00F9ACB2 /* LifeTrackr.app */,
+				CCEFF7361886346F00F9ACB2 /* LifeTrackrTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,6 +131,8 @@
 		CCEFF71E1886346E00F9ACB2 /* step */ = {
 			isa = PBXGroup;
 			children = (
+				749CBB641989902400AACB45 /* FCFileManager.h */,
+				749CBB651989902400AACB45 /* FCFileManager.m */,
 				CCEFF7271886346E00F9ACB2 /* AppDelegate.h */,
 				CCEFF7281886346E00F9ACB2 /* AppDelegate.m */,
 				CCEFF72A1886346E00F9ACB2 /* Main.storyboard */,
@@ -142,10 +147,10 @@
 		CCEFF71F1886346E00F9ACB2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CCEFF7201886346E00F9ACB2 /* step-Info.plist */,
+				CCEFF7201886346E00F9ACB2 /* LifeTrackr-Info.plist */,
 				CCEFF7211886346E00F9ACB2 /* InfoPlist.strings */,
 				CCEFF7241886346E00F9ACB2 /* main.m */,
-				CCEFF7261886346E00F9ACB2 /* step-Prefix.pch */,
+				CCEFF7261886346E00F9ACB2 /* LifeTrackr-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -162,7 +167,7 @@
 		CCEFF73E1886346F00F9ACB2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				CCEFF73F1886346F00F9ACB2 /* stepTests-Info.plist */,
+				CCEFF73F1886346F00F9ACB2 /* LifeTrackrTests-Info.plist */,
 				CCEFF7401886346F00F9ACB2 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -171,9 +176,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CCEFF7141886346E00F9ACB2 /* step */ = {
+		CCEFF7141886346E00F9ACB2 /* LifeTrackr */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CCEFF7471886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "step" */;
+			buildConfigurationList = CCEFF7471886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "LifeTrackr" */;
 			buildPhases = (
 				CCEFF7111886346E00F9ACB2 /* Sources */,
 				CCEFF7121886346E00F9ACB2 /* Frameworks */,
@@ -183,14 +188,14 @@
 			);
 			dependencies = (
 			);
-			name = step;
+			name = LifeTrackr;
 			productName = step;
-			productReference = CCEFF7151886346E00F9ACB2 /* step.app */;
+			productReference = CCEFF7151886346E00F9ACB2 /* LifeTrackr.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CCEFF7351886346F00F9ACB2 /* stepTests */ = {
+		CCEFF7351886346F00F9ACB2 /* LifeTrackrTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CCEFF74A1886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "stepTests" */;
+			buildConfigurationList = CCEFF74A1886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "LifeTrackrTests" */;
 			buildPhases = (
 				CCEFF7321886346F00F9ACB2 /* Sources */,
 				CCEFF7331886346F00F9ACB2 /* Frameworks */,
@@ -201,9 +206,9 @@
 			dependencies = (
 				CCEFF73C1886346F00F9ACB2 /* PBXTargetDependency */,
 			);
-			name = stepTests;
+			name = LifeTrackrTests;
 			productName = stepTests;
-			productReference = CCEFF7361886346F00F9ACB2 /* stepTests.xctest */;
+			productReference = CCEFF7361886346F00F9ACB2 /* LifeTrackrTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -213,14 +218,17 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0600;
-				ORGANIZATIONNAME = crazypoo;
+				ORGANIZATIONNAME = Disney;
 				TargetAttributes = {
+					CCEFF7141886346E00F9ACB2 = {
+						DevelopmentTeam = 4R23T2S4AY;
+					};
 					CCEFF7351886346F00F9ACB2 = {
 						TestTargetID = CCEFF7141886346E00F9ACB2;
 					};
 				};
 			};
-			buildConfigurationList = CCEFF7101886346E00F9ACB2 /* Build configuration list for PBXProject "step" */;
+			buildConfigurationList = CCEFF7101886346E00F9ACB2 /* Build configuration list for PBXProject "LifeTrackr" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -233,8 +241,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CCEFF7141886346E00F9ACB2 /* step */,
-				CCEFF7351886346F00F9ACB2 /* stepTests */,
+				CCEFF7141886346E00F9ACB2 /* LifeTrackr */,
+				CCEFF7351886346F00F9ACB2 /* LifeTrackrTests */,
 			);
 		};
 /* End PBXProject section */
@@ -269,6 +277,7 @@
 			files = (
 				CCEFF72F1886346E00F9ACB2 /* ViewController.m in Sources */,
 				CCEFF7291886346E00F9ACB2 /* AppDelegate.m in Sources */,
+				749CBB661989902400AACB45 /* FCFileManager.m in Sources */,
 				CCEFF7251886346E00F9ACB2 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,7 +295,7 @@
 /* Begin PBXTargetDependency section */
 		CCEFF73C1886346F00F9ACB2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CCEFF7141886346E00F9ACB2 /* step */;
+			target = CCEFF7141886346E00F9ACB2 /* LifeTrackr */;
 			targetProxy = CCEFF73B1886346F00F9ACB2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -394,10 +403,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "step/step-Prefix.pch";
-				INFOPLIST_FILE = "step/step-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "step/LifeTrackr-Prefix.pch";
+				INFOPLIST_FILE = "step/LifeTrackr-Info.plist";
+				PRODUCT_NAME = LifeTrackr;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -407,10 +417,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "step/step-Prefix.pch";
-				INFOPLIST_FILE = "step/step-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "step/LifeTrackr-Prefix.pch";
+				INFOPLIST_FILE = "step/LifeTrackr-Info.plist";
+				PRODUCT_NAME = LifeTrackr;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -430,8 +441,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "stepTests/stepTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "stepTests/LifeTrackrTests-Info.plist";
+				PRODUCT_NAME = LifeTrackrTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -448,8 +459,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "step/step-Prefix.pch";
-				INFOPLIST_FILE = "stepTests/stepTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "stepTests/LifeTrackrTests-Info.plist";
+				PRODUCT_NAME = LifeTrackrTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -458,7 +469,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CCEFF7101886346E00F9ACB2 /* Build configuration list for PBXProject "step" */ = {
+		CCEFF7101886346E00F9ACB2 /* Build configuration list for PBXProject "LifeTrackr" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CCEFF7451886346F00F9ACB2 /* Debug */,
@@ -467,7 +478,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CCEFF7471886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "step" */ = {
+		CCEFF7471886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "LifeTrackr" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CCEFF7481886346F00F9ACB2 /* Debug */,
@@ -476,7 +487,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CCEFF74A1886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "stepTests" */ = {
+		CCEFF74A1886346F00F9ACB2 /* Build configuration list for PBXNativeTarget "LifeTrackrTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CCEFF74B1886346F00F9ACB2 /* Debug */,

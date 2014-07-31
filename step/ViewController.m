@@ -2,14 +2,15 @@
 //  ViewController.m
 //  step
 //
-//  Created by crazypoo on 1/15/14.
+//  Originally Created by crazypoo on 1/15/14.
 //  Copyright (c) 2014 crazypoo. All rights reserved.
-//
+//  Modified by Chen Zhao
 
 #import "ViewController.h"
 #import <CoreMotion/CoreMotion.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
+#import "FCFileManager.h"
 
 
 @interface ViewController ()
@@ -20,11 +21,19 @@
 @property (nonatomic, weak) IBOutlet UILabel *statusLabel;
 @property (nonatomic, weak) IBOutlet UILabel *confidenceLabel;
 @property (nonatomic, weak) IBOutlet UITextView *records;
+@property (nonatomic,retain) IBOutlet UITableView *tableView;
+
 
 
 @end
 
 @implementation ViewController
+{
+    NSArray *filelist;
+    NSString *seletedFileName;
+}
+
+@synthesize tableView=_tableView;
 
 
 - (void)viewDidLoad
@@ -76,7 +85,7 @@
                  }
                  else {
                      
-                     NSString *text = [NSString stringWithFormat:@"步數: %ld", (long)numberOfSteps];
+                     NSString *text = [NSString stringWithFormat:@"Steps: %ld", (long)numberOfSteps];
                      
                      weakSelf.stepsLabel.text = text;
                  }
@@ -84,7 +93,7 @@
          }];
     }
     
-//開波
+//Start
     if ([CMMotionActivityManager isActivityAvailable]) {
         
         self.activityManager = [[CMMotionActivityManager alloc] init];
@@ -103,7 +112,7 @@
                  
                  
                  
-                 NSString *content = [NSString stringWithFormat:@"%@,%@,%@\n", status, confidence, [self getCurrentTime]];
+                 NSString *content = [NSString stringWithFormat:@"%@,%@,%@,%@\n", weakSelf.stepsLabel.text, status, confidence, [self getCurrentTime]];
                  
                  
                  
@@ -118,7 +127,17 @@
              });
          }];
     }
+    
+    
+    filelist = [self listFile];
+
+//    recipes = [NSArray arrayWithObjects:@"Egg Benedict", @"Mushroom Risotto", @"Full Breakfast", @"Hamburger", @"Ham and Egg Sandwich", @"Creme Brelee", @"White Chocolate Donut", @"Starbucks Coffee", @"Vegetable Curry", @"Instant Noodle with Egg", @"Noodle with BBQ Pork", @"Japanese Noodle with Pork", @"Green Tea", @"Thai Shrimp Cake", @"Angry Birds Cake", @"Ham and Cheese Panini", nil];
+//    //self.items = list;
 }
+
+
+
+
 - (NSString *)statusForActivity:(CMMotionActivity *)activity {
     
     NSMutableString *status = @"".mutableCopy;
@@ -192,9 +211,9 @@
     // 创建目录
     BOOL res=[fileManager createDirectoryAtPath:testDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     if (res) {
-        NSLog(@"文件夹创建成功");
+        NSLog(@"Succeed");
     }else
-        NSLog(@"文件夹创建失败");
+        NSLog(@"Failed");
 }
 
 //Get Documents path
@@ -233,9 +252,9 @@
     NSString *testPath = [testDirectory stringByAppendingPathComponent:@"test.txt"];
     BOOL res=[fileManager createFileAtPath:testPath contents:nil attributes:nil];
     if (res) {
-        NSLog(@"文件创建成功: %@" ,testPath);
+        NSLog(@"Succeed: %@" ,testPath);
     }else
-        NSLog(@"文件创建失败");
+        NSLog(@"Failed");
 }
 
 - (NSString*)getCurrentTime{
@@ -252,40 +271,28 @@
 
 - (void)tik{
     
-//    if ([[UIApplication sharedApplication] backgroundTimeRemaining] < 610.0) {
-        
-//        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil]
-//        
-//        
-//        [[CKAudioTool sharedInstance] playSound];
-//        
-//
-    //后台播放音频设置
-//    AVAudioSession *session = [AVAudioSession sharedInstance];
-//    [session setActive:YES error:nil];
-//    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
-//    
+
     
     NSTimeInterval timeLeft = [UIApplication sharedApplication].backgroundTimeRemaining;
     NSLog(@"Background time remaining2222: %.0f seconds (%d mins)", timeLeft, (int)(timeLeft / 60) );
     
-    //让app支持接受远程控制事件
+    //Remote control
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
-    //播放背景音乐
+    //Play background music
     NSString *musicPath = [[NSBundle mainBundle] pathForResource:@"background" ofType:@"wav"];
     NSURL *url = [[NSURL alloc] initFileURLWithPath:musicPath];
     
-    // 创建播放器
+    // Create player
     static AVAudioPlayer *player = nil;
     if (player == nil)
     {
             player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
     }
     [player prepareToPlay];
-    [player setVolume:1];
-    player.numberOfLoops = 1; //设置音乐播放次数  -1为一直循环
-    [player play]; //播放
+    [player setVolume:0];
+    player.numberOfLoops = 1; //Set loops.   -1 is infinite loop
+    [player play]; //play
     
     
     [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
@@ -294,8 +301,127 @@
     
 }
 
+-(NSArray *)listFile{
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDir = [documentPaths objectAtIndex:0];
+    documentDir = [documentDir stringByAppendingString:@"/test"];
+    
+    NSArray *array = [FCFileManager listItemsInDirectoryAtPathRelative:documentDir deep:NO];
+    
+    return array;
+}
 
 
+
+
+
+#pragma mark - TableView Methods
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [filelist count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *simpleTableIdentifier = @"SimpleTableCell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+    }
+    
+    cell.textLabel.text = [filelist objectAtIndex:indexPath.row];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    
+    UIAlertView *messageAlert = [[UIAlertView alloc]
+                                 initWithTitle:@"Row Selected" message:[filelist objectAtIndex:indexPath.row] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Delete", nil];
+    seletedFileName = [filelist objectAtIndex:indexPath.row];
+    // Display Alert Message
+    [messageAlert setTag:0];
+    [messageAlert show];
+    
+}
+
+#pragma mark - Alert view delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:
+    (NSInteger)buttonIndex{
+    switch (alertView.tag) {
+        case 0: // Delete single item
+            switch (buttonIndex) {
+                case 0:
+                    NSLog(@"Cancel button clicked");
+                    break;
+                case 1:{
+                    NSLog(@"Delete button clicked");
+                    NSString *filePath = [@"test/" stringByAppendingString:seletedFileName];
+                    NSString *fullFilePath = [FCFileManager pathForDocumentsDirectoryWithPath:filePath];
+                    BOOL result = [FCFileManager removeItemAtPath:fullFilePath];
+                    //[self deleteFile:fullFilePath];
+                    filelist = [self listFile];
+                    [self.tableView reloadData];
+                    
+                    
+                    break;
+                    }
+                    
+                default:
+                    break;
+            }
+            break;
+        
+        case 1: // Delete All files
+            switch (buttonIndex) {
+                case 0:
+                    NSLog(@"Cancel button clicked");
+                    break;
+                case 1:{
+                    UITextField *answer = [alertView textFieldAtIndex:0];
+                    
+                    if ([answer.text isEqualToString:@"yes"]){
+                        
+                        NSString *fullFilePath = [[FCFileManager pathForDocumentsDirectory] stringByAppendingString:@"/test"] ;
+                        NSFileManager *fileManager = [NSFileManager defaultManager];
+                        [fileManager removeItemAtPath:fullFilePath error:nil];
+                        filelist = [self listFile];
+                        
+                        [self.tableView reloadData];
+                        [self createDir];
+                        
+                    }
+                    else {
+                        break;
+                    }
+                    
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+            break;
+        
+        default:
+            break;
+            
+    }
+}
+
+- (IBAction) deleteAllFiles: (id)sender
+{
+    UIAlertView *messageAlert = [[UIAlertView alloc]
+                                 initWithTitle:@"Warning!!" message:@"Delete all files?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    // Display Alert Message
+    [messageAlert setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [messageAlert setTag:1];
+    [messageAlert show];
+}
 
 
 

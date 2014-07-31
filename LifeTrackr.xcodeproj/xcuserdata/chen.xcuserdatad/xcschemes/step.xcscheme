@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CCEFF7141886346E00F9ACB2"
-               BuildableName = "step.app"
-               BlueprintName = "step"
-               ReferencedContainer = "container:step.xcodeproj">
+               BuildableName = "LifeTrackr.app"
+               BlueprintName = "LifeTrackr"
+               ReferencedContainer = "container:LifeTrackr.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CCEFF7351886346F00F9ACB2"
-               BuildableName = "stepTests.xctest"
-               BlueprintName = "stepTests"
-               ReferencedContainer = "container:step.xcodeproj">
+               BuildableName = "LifeTrackrTests.xctest"
+               BlueprintName = "LifeTrackrTests"
+               ReferencedContainer = "container:LifeTrackr.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CCEFF7141886346E00F9ACB2"
-            BuildableName = "step.app"
-            BlueprintName = "step"
-            ReferencedContainer = "container:step.xcodeproj">
+            BuildableName = "LifeTrackr.app"
+            BlueprintName = "LifeTrackr"
+            ReferencedContainer = "container:LifeTrackr.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CCEFF7141886346E00F9ACB2"
-            BuildableName = "step.app"
-            BlueprintName = "step"
-            ReferencedContainer = "container:step.xcodeproj">
+            BuildableName = "LifeTrackr.app"
+            BlueprintName = "LifeTrackr"
+            ReferencedContainer = "container:LifeTrackr.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -80,9 +80,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CCEFF7141886346E00F9ACB2"
-            BuildableName = "step.app"
-            BlueprintName = "step"
-            ReferencedContainer = "container:step.xcodeproj">
+            BuildableName = "LifeTrackr.app"
+            BlueprintName = "LifeTrackr"
+            ReferencedContainer = "container:LifeTrackr.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

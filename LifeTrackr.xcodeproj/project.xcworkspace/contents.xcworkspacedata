@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:step.xcodeproj">
+      location = "self:LifeTrackr.xcodeproj">
    </FileRef>
 </Workspace>
