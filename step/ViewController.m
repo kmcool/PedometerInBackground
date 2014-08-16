@@ -10,10 +10,10 @@
 #import <CoreMotion/CoreMotion.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-#import "FCFileManager.h"
+#import "FCFileManager.h"  //for listing and deleting, not for saving file and creating dir
 #import <PebbleKit/PebbleKit.h>
 #import "CorePlot-CocoaTouch.h"
-
+#import <CoreLocation/CoreLocation.h>
 
 @interface ViewController () <PBDataLoggingServiceDelegate>
 
@@ -22,9 +22,14 @@
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, weak) IBOutlet UILabel *stepsLabel;
 @property (nonatomic, weak) IBOutlet UILabel *statusLabel;
+@property (nonatomic, weak) IBOutlet UILabel *pebbleBat;
+@property (nonatomic, weak) IBOutlet UILabel *GPSSpeed;
+@property (nonatomic, weak) IBOutlet UILabel *sampleRate;
+@property (nonatomic, weak) IBOutlet UIButton *startPebble;
 @property (nonatomic, weak) IBOutlet UILabel *confidenceLabel;
 @property (nonatomic, weak) IBOutlet UITextView *records;
 @property (nonatomic,retain) IBOutlet UITableView *tableView;
+
 
 
 
@@ -41,19 +46,27 @@
     int32_t totalData;
     int32_t sampleCount;
     NSMutableArray *latest_data;
-    
+    NSString *fileName_acc_data;
+    NSString *current_Activity;
+    NSString *current_Environment;
     long long lastTimeInterval;
-    
-    
+    BOOL isAccRecording;
+    id appMessageHandle;
+    long steps;
+    CLLocationManager *locationManager;
+    CLLocation *checkinLocation;
 }
 
 @synthesize tableView=_tableView;
+
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    //------------------------------------init
     if (!([CMStepCounter isStepCountingAvailable] || [CMMotionActivityManager isActivityAvailable])) {
         
         NSString *msg = @"Only suppoert iPhone 5s (M7 is needed)";
@@ -71,20 +84,22 @@
     
     self.operationQueue = [[NSOperationQueue alloc] init];
     
+    current_Activity = @"Sit\n";
+    current_Environment = @"indoor\n";
+    
+    //--------------------------------Create directory for saving data
     [self createDir];
     
-    NSString *filename = [self getCurrentTime]; //use app in
+    NSString *filename = [self getCurrentTime];
     
     
     NSTimer *_timer;
     _timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(tik) userInfo:nil repeats:YES];
     
     [self tik];
-    //---------------------------------Pebble
+    //---------------------------------Pebble init
     connectedWatch = [[PBPebbleCentral defaultCentral] lastConnectedWatch];
-    //NSLog(@"Last connected watch: %@", connectedWatch);
-    
-    //[[[PBPebbleCentral defaultCentral] dataLoggingService] setDelegate:self];
+
     
     [connectedWatch appMessagesLaunch:^(PBWatch *watch, NSError *error) {
         if (!error) {
@@ -95,6 +110,7 @@
         }
     }];
      
+    isAccRecording = false;
     
     //--------------------------------Graph
 
@@ -105,7 +121,7 @@
     [graphViewX setStrokeColor:[UIColor redColor]];
     [graphViewX setZeroLineStrokeColor:[UIColor greenColor]];
     //[graphViewX setFillColor:[UIColor orangeColor]];
-    [graphViewX setNumberOfPointsInGraph:(int)100];
+    [graphViewX setNumberOfPointsInGraph:(int)50];
     [graphViewX setLineWidth:2];
     [graphViewX setCurvedLines:YES];
     //[self.view addSubview:graphViewX];
@@ -120,7 +136,7 @@
     [graphViewY setStrokeColor:[UIColor blueColor]];
     [graphViewY setZeroLineStrokeColor:[UIColor greenColor]];
     //[graphViewY setFillColor:[UIColor orangeColor]];
-    [graphViewY setNumberOfPointsInGraph:(int)100];
+    [graphViewY setNumberOfPointsInGraph:(int)50];
     [graphViewY setLineWidth:2];
     [graphViewY setCurvedLines:YES];
     //[self.view addSubview:graphViewY];
@@ -135,13 +151,18 @@
     [graphViewZ setStrokeColor:[UIColor yellowColor]];
     [graphViewZ setZeroLineStrokeColor:[UIColor greenColor]];
     //[graphViewZ setFillColor:[UIColor orangeColor]];
-    [graphViewZ setNumberOfPointsInGraph:(int)100];
+    [graphViewZ setNumberOfPointsInGraph:(int)50];
     [graphViewZ setLineWidth:2];
     [graphViewZ setCurvedLines:YES];
     //[self.view addSubview:graphViewZ];
     [viewZ setAlpha:0.8];
     [viewZ setBackgroundColor:[UIColor clearColor]];
     [viewZ addSubview:graphViewZ];
+    
+    
+
+
+        
     //--------------------------------M7
     
     if ([CMStepCounter isStepCountingAvailable]) {
@@ -162,6 +183,7 @@
                  else {
                      
                      NSString *text = [NSString stringWithFormat:@"Steps: %ld", (long)numberOfSteps];
+                     steps = (long)numberOfSteps;
                      
                      weakSelf.stepsLabel.text = text;
                  }
@@ -191,11 +213,8 @@
                  NSString *content = [NSString stringWithFormat:@"%@,%@,%@,%@\n", weakSelf.stepsLabel.text, status, confidence, [self getCurrentTime]];
                  
                  
-                 
-                 //[self writeFile:content :filename];
-                 
                  NSLog(@"%@",content);
-                 
+                 [self writeFile:content :filename];
                  weakSelf.records.text = [weakSelf.records.text stringByAppendingString:content];
                  NSRange range = NSMakeRange(weakSelf.records.text.length - 1, 1); //auto scroll
                  [weakSelf.records scrollRangeToVisible:range];
@@ -207,8 +226,6 @@
     
     filelist = [self listFile];
 
-//    recipes = [NSArray arrayWithObjects:@"Egg Benedict", @"Mushroom Risotto", @"Full Breakfast", @"Hamburger", @"Ham and Egg Sandwich", @"Creme Brelee", @"White Chocolate Donut", @"Starbucks Coffee", @"Vegetable Curry", @"Instant Noodle with Egg", @"Noodle with BBQ Pork", @"Japanese Noodle with Pork", @"Green Tea", @"Thai Shrimp Cake", @"Angry Birds Cake", @"Ham and Cheese Panini", nil];
-//    //self.items = list;
 }
 
 
@@ -499,68 +516,175 @@
     [messageAlert show];
 }
 
+//----------------------------------------Start Button
 - (IBAction) connect: (id)sender
 {
-    NSDictionary *update = @{ @(0):[NSNumber numberWithUint8:0],
-                              @(1):[NSNumber numberWithUint8:0]};//@"a string" };
-    [connectedWatch appMessagesPushUpdate:update onSent:^(PBWatch *watch, NSDictionary *update, NSError *error) {
-        if (!error) {
-            NSLog(@"Successfully sent message.");
-        }
-        else {
-            NSLog(@"Error sending message: %@", error);
-        }
-    }];
     
-    
-    [connectedWatch appMessagesAddReceiveUpdateHandler:^BOOL(PBWatch *watch, NSDictionary *update) {
-
+    if (!isAccRecording){
+        
         int NUM_SAMPLES = 15;
-        totalData += 3 * NUM_SAMPLES * 4; //Count total data
-        latest_data = [NSMutableArray arrayWithCapacity:totalData];
-        //Get data
-        [latest_data removeAllObjects]; // empty the array
         
+        [activitySelector setEnabled:false];
+        [envirSelector setEnabled:false];
         
+        //-------------------------------GPS
         
-        for (int i = 0; i< NUM_SAMPLES ; i++){
-            for (int j =0; j<3 ; j++) {
-                @try {
-                    long key = (3*i)+j;
-                    int value = [[update objectForKey:@(key)] int32Value];
-                    NSNumber *valueWrapped = [NSNumber numberWithInt:value];
-                    [latest_data addObject:valueWrapped];
-                    
-                }
-                @catch (NSException *exception){
-                    NSLog(@"error");
-                }
-            }
-            int x = [[latest_data objectAtIndex:(i*3)] intValue];
-            int y = [[latest_data objectAtIndex:(i*3+1)] intValue];
-            int z = [[latest_data objectAtIndex:(i*3+2)] intValue];
-            [graphViewX setPoint:(float)x];
-            [graphViewY setPoint:(float)y];
-            [graphViewZ setPoint:(float)z];
+        locationManager = [[CLLocationManager alloc] init];
+        if ([CLLocationManager locationServicesEnabled]) {
+            NSLog( @"Starting CLLocationManager" );
+            locationManager.delegate = self;
+            locationManager.distanceFilter = 50;
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+            [locationManager startUpdatingLocation]; //Start GPS
+        }
+        else
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Opps!!!"
+                                                            message:@"Please enable the location service."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
             
-            NSLog(@"x:%d, y:%d, z:%d",x,y,z);
+            [alert show];
+            return;
+        }
+        
+        //--------------------------------Pebble
+        [self.startPebble setAttributedTitle:nil forState:UIControlStateNormal];
+        [self.startPebble setTitle:@"Stop" forState:UIControlStateNormal];
 
-        }
-        int battery = [[update objectForKey:@(3*NUM_SAMPLES)] int32Value];
-        NSLog(@"battery:%d",battery);
+        isAccRecording = true;
         
-        long long sec = [[NSDate date] timeIntervalSince1970] * 1000;
-        if (lastTimeInterval){
-            int timediff = (int) sec - lastTimeInterval;
-            NSLog(@"timedelay: %d",(int)timediff);
-        }
-        lastTimeInterval = [[NSDate date] timeIntervalSince1970] * 1000;
+        fileName_acc_data = [[self getCurrentTime] stringByAppendingString:@"_acc"]; // get the file name for saving acc data
         
-        return YES;
-    }];
+        [self writeFile:current_Environment :fileName_acc_data];
+        [self writeFile:current_Activity :fileName_acc_data];
+        
+        
+        NSDictionary *update = @{ @(0):[NSNumber numberWithUint8:0],
+                                  @(1):[NSNumber numberWithUint8:0]};   //send commands to Pebble to start the app
+        
+        [connectedWatch appMessagesPushUpdate:update onSent:^(PBWatch *watch, NSDictionary *update, NSError *error) {
+            if (!error) {
+                NSLog(@"Successfully sent message.");
+            }
+            else {
+                NSLog(@"Error sending message: %@", error);
+            }
+        }];
+        
+        
+        appMessageHandle = [connectedWatch appMessagesAddReceiveUpdateHandler:^BOOL(PBWatch *watch, NSDictionary *update) {
+
+
+            totalData += 3 * NUM_SAMPLES * 4; //Count total data
+            latest_data = [NSMutableArray arrayWithCapacity:totalData];
+            
+            
+            //Get data
+            [latest_data removeAllObjects]; // empty the array
+            
+            
+            
+            for (int i = 0; i< NUM_SAMPLES ; i++){
+                for (int j =0; j<3 ; j++) {
+                    @try {
+                        long key = (3*i)+j;
+                        int value = [[update objectForKey:@(key)] int32Value];
+                        NSNumber *valueWrapped = [NSNumber numberWithInt:value];
+                        [latest_data addObject:valueWrapped];
+                        
+                    }
+                    @catch (NSException *exception){
+                        NSLog(@"error");
+                    }
+                }
+                int x = [[latest_data objectAtIndex:(i*3)] intValue];
+                int y = [[latest_data objectAtIndex:(i*3+1)] intValue];
+                int z = [[latest_data objectAtIndex:(i*3+2)] intValue];
+                
+            
+                [graphViewX setPoint:(float)x];
+                [graphViewY setPoint:(float)y];
+                [graphViewZ setPoint:(float)z];
+                
+                NSString *temp = [NSString stringWithFormat:@"x:%d, y:%d, z:%d, steps:%ld, latitude:%f, longitude:%f, speed:%f, horizontal accuracy:%f, %@\n",x,y,z,steps,checkinLocation.coordinate.latitude, checkinLocation.coordinate.longitude, checkinLocation.speed,checkinLocation.horizontalAccuracy, [self getCurrentTime]];
+                
+                NSLog(temp);
+                [self writeFile:temp :fileName_acc_data];
+                
+                NSString *text = [NSString stringWithFormat:@"Speed: %.2f", checkinLocation.speed];
+                self.GPSSpeed.text = text;
+
+
+            }
+            int battery = [[update objectForKey:@(3*NUM_SAMPLES)] int32Value];
+            NSString *text = [NSString stringWithFormat:@"Pebble's battery: %d", (int) battery];
+            self.pebbleBat.text = text;
+            //--------------------------------calculate sample rate
+            long long sec = [[NSDate date] timeIntervalSince1970] * 1000;
+            if (lastTimeInterval){
+                int timediff = (int) sec - lastTimeInterval;
+                NSLog(@"timedelay: %d",(int)timediff);
+                
+                NSString *text = [NSString stringWithFormat:@"Sample Rate:%.1f Sps", (float)NUM_SAMPLES*1000.0/(float)timediff];
+                self.sampleRate.text = text;
+            }
+            
+            lastTimeInterval = [[NSDate date] timeIntervalSince1970] * 1000;
+            
+            
+            return YES;
+        }];
+    }
+    else
+    {
+        [activitySelector setEnabled:true];
+        [envirSelector setEnabled:true];
+        [self.startPebble setAttributedTitle:nil forState:UIControlStateNormal];
+        [self.startPebble setTitle:@"Start Pebble" forState:UIControlStateNormal];
+        isAccRecording = false;
+        [connectedWatch appMessagesRemoveUpdateHandler:appMessageHandle];
+    }
 }
 
+//----------------------------------------Segmented Control
 
+- (IBAction)ActivitySelect:(id)sender {
+    switch(activitySelector.selectedSegmentIndex) {
+        case 0: //sit
+            current_Activity = @"Sit\n";
+            break;
+        case 1: //Walk
+            current_Activity = @"Walk\n";
+            break;
+        case 2: //Run
+            current_Activity = @"Run\n";
+            break;
+        case 3: //Bicycle
+            current_Activity = @"Bicycle\n";
+            break;
+    }
+}
+
+- (IBAction)EnvironmentSlect:(id)sender {
+    switch(envirSelector.selectedSegmentIndex) {
+        case 0: //indoor
+            current_Environment = @"indoor\n";
+            break;
+        case 1: //Walk
+            current_Environment = @"outdoor\n";
+            break;
+
+    }
+}
+
+//-------------------------------------------Location
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation {
+    checkinLocation = newLocation;
+    //do something else
+}
 
 
 @end

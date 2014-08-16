@@ -23,6 +23,9 @@
     IBOutlet UIView *viewX;
     IBOutlet UIView *viewY;
     IBOutlet UIView *viewZ;
+    IBOutlet UISegmentedControl *activitySelector;
+    IBOutlet UISegmentedControl *envirSelector;
+
     
 }
 
@@ -30,6 +33,8 @@
 @property (strong, nonatomic) GraphView *graphViewX;
 @property (strong, nonatomic) GraphView *graphViewY;
 @property (strong, nonatomic) GraphView *graphViewZ;
+
+
 
 @end
 
