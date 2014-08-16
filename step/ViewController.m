@@ -11,9 +11,12 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
 #import "FCFileManager.h"
+#import <PebbleKit/PebbleKit.h>
+#import "CorePlot-CocoaTouch.h"
 
 
-@interface ViewController ()
+@interface ViewController () <PBDataLoggingServiceDelegate>
+
 @property (nonatomic, strong) CMStepCounter *stepCounter;
 @property (nonatomic, strong) CMMotionActivityManager *activityManager;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
@@ -29,8 +32,19 @@
 
 @implementation ViewController
 {
+    CPTXYGraph * _graph;
+    NSMutableArray * _dataForPlot;
+    
     NSArray *filelist;
     NSString *seletedFileName;
+    PBWatch *connectedWatch;
+    int32_t totalData;
+    int32_t sampleCount;
+    NSMutableArray *latest_data;
+    
+    long long lastTimeInterval;
+    
+    
 }
 
 @synthesize tableView=_tableView;
@@ -66,8 +80,70 @@
     _timer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(tik) userInfo:nil repeats:YES];
     
     [self tik];
+    //---------------------------------Pebble
+    connectedWatch = [[PBPebbleCentral defaultCentral] lastConnectedWatch];
+    //NSLog(@"Last connected watch: %@", connectedWatch);
     
-    //更新label
+    //[[[PBPebbleCentral defaultCentral] dataLoggingService] setDelegate:self];
+    
+    [connectedWatch appMessagesLaunch:^(PBWatch *watch, NSError *error) {
+        if (!error) {
+            NSLog(@"Successfully launched app.");
+        }
+        else {
+            NSLog(@"Error launching app - Error: %@", error);
+        }
+    }];
+     
+    
+    //--------------------------------Graph
+
+    graphViewX = [[GraphView alloc]initWithFrame:CGRectMake(0, 0, viewX.frame.size.width, viewX.frame.size.height)];
+    [graphViewX setBackgroundColor:[UIColor clearColor]];
+    [graphViewX setSpacing:500];
+    [graphViewX setFill:NO];
+    [graphViewX setStrokeColor:[UIColor redColor]];
+    [graphViewX setZeroLineStrokeColor:[UIColor greenColor]];
+    //[graphViewX setFillColor:[UIColor orangeColor]];
+    [graphViewX setNumberOfPointsInGraph:(int)100];
+    [graphViewX setLineWidth:2];
+    [graphViewX setCurvedLines:YES];
+    //[self.view addSubview:graphViewX];
+    [viewX setBackgroundColor:[UIColor clearColor]];
+    [viewX setAlpha:0.8];
+    [viewX addSubview:graphViewX];
+
+    graphViewY = [[GraphView alloc]initWithFrame:CGRectMake(0, 0, viewY.frame.size.width, viewY.frame.size.height)];
+    [graphViewY setBackgroundColor:[UIColor clearColor]];
+    [graphViewY setSpacing:500];
+    [graphViewY setFill:NO];
+    [graphViewY setStrokeColor:[UIColor blueColor]];
+    [graphViewY setZeroLineStrokeColor:[UIColor greenColor]];
+    //[graphViewY setFillColor:[UIColor orangeColor]];
+    [graphViewY setNumberOfPointsInGraph:(int)100];
+    [graphViewY setLineWidth:2];
+    [graphViewY setCurvedLines:YES];
+    //[self.view addSubview:graphViewY];
+    [viewY setBackgroundColor:[UIColor clearColor]];
+    [viewY setAlpha:0.8];
+    [viewY addSubview:graphViewY];
+    
+    graphViewZ = [[GraphView alloc]initWithFrame:CGRectMake(0, 0, viewZ.frame.size.width, viewZ.frame.size.height)];
+    [graphViewZ setBackgroundColor:[UIColor clearColor]];
+    [graphViewZ setSpacing:500];
+    [graphViewZ setFill:NO];
+    [graphViewZ setStrokeColor:[UIColor yellowColor]];
+    [graphViewZ setZeroLineStrokeColor:[UIColor greenColor]];
+    //[graphViewZ setFillColor:[UIColor orangeColor]];
+    [graphViewZ setNumberOfPointsInGraph:(int)100];
+    [graphViewZ setLineWidth:2];
+    [graphViewZ setCurvedLines:YES];
+    //[self.view addSubview:graphViewZ];
+    [viewZ setAlpha:0.8];
+    [viewZ setBackgroundColor:[UIColor clearColor]];
+    [viewZ addSubview:graphViewZ];
+    //--------------------------------M7
+    
     if ([CMStepCounter isStepCountingAvailable]) {
         
         self.stepCounter = [[CMStepCounter alloc] init];
@@ -116,7 +192,7 @@
                  
                  
                  
-                 [self writeFile:content :filename];
+                 //[self writeFile:content :filename];
                  
                  NSLog(@"%@",content);
                  
@@ -208,7 +284,7 @@
     NSString *documentsPath =[self dirDoc];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *testDirectory = [documentsPath stringByAppendingPathComponent:@"test"];
-    // 创建目录
+    
     BOOL res=[fileManager createDirectoryAtPath:testDirectory withIntermediateDirectories:YES attributes:nil error:nil];
     if (res) {
         NSLog(@"Succeed");
@@ -422,6 +498,68 @@
     [messageAlert setTag:1];
     [messageAlert show];
 }
+
+- (IBAction) connect: (id)sender
+{
+    NSDictionary *update = @{ @(0):[NSNumber numberWithUint8:0],
+                              @(1):[NSNumber numberWithUint8:0]};//@"a string" };
+    [connectedWatch appMessagesPushUpdate:update onSent:^(PBWatch *watch, NSDictionary *update, NSError *error) {
+        if (!error) {
+            NSLog(@"Successfully sent message.");
+        }
+        else {
+            NSLog(@"Error sending message: %@", error);
+        }
+    }];
+    
+    
+    [connectedWatch appMessagesAddReceiveUpdateHandler:^BOOL(PBWatch *watch, NSDictionary *update) {
+
+        int NUM_SAMPLES = 15;
+        totalData += 3 * NUM_SAMPLES * 4; //Count total data
+        latest_data = [NSMutableArray arrayWithCapacity:totalData];
+        //Get data
+        [latest_data removeAllObjects]; // empty the array
+        
+        
+        
+        for (int i = 0; i< NUM_SAMPLES ; i++){
+            for (int j =0; j<3 ; j++) {
+                @try {
+                    long key = (3*i)+j;
+                    int value = [[update objectForKey:@(key)] int32Value];
+                    NSNumber *valueWrapped = [NSNumber numberWithInt:value];
+                    [latest_data addObject:valueWrapped];
+                    
+                }
+                @catch (NSException *exception){
+                    NSLog(@"error");
+                }
+            }
+            int x = [[latest_data objectAtIndex:(i*3)] intValue];
+            int y = [[latest_data objectAtIndex:(i*3+1)] intValue];
+            int z = [[latest_data objectAtIndex:(i*3+2)] intValue];
+            [graphViewX setPoint:(float)x];
+            [graphViewY setPoint:(float)y];
+            [graphViewZ setPoint:(float)z];
+            
+            NSLog(@"x:%d, y:%d, z:%d",x,y,z);
+
+        }
+        int battery = [[update objectForKey:@(3*NUM_SAMPLES)] int32Value];
+        NSLog(@"battery:%d",battery);
+        
+        long long sec = [[NSDate date] timeIntervalSince1970] * 1000;
+        if (lastTimeInterval){
+            int timediff = (int) sec - lastTimeInterval;
+            NSLog(@"timedelay: %d",(int)timediff);
+        }
+        lastTimeInterval = [[NSDate date] timeIntervalSince1970] * 1000;
+        
+        return YES;
+    }];
+}
+
 
 
 

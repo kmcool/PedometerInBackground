@@ -8,8 +8,10 @@
 
 #import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
+#import <PebbleKit/PebbleKit.h>
 
 @implementation AppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -17,12 +19,22 @@
     //[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     AVAudioSession *session = [AVAudioSession sharedInstance];
     
+    [PBPebbleCentral setDebugLogsEnabled:YES];
+    
+    uuid_t myAppUUIDbytes;
+    NSUUID *myAppUUID = [[NSUUID alloc] initWithUUIDString:@"2893b0c4-2bca-4c83-a33a-0ef6ba6c8b17"];
+    [myAppUUID getUUIDBytes:myAppUUIDbytes];
+    [[PBPebbleCentral defaultCentral] setAppUUID:[NSData dataWithBytes:myAppUUIDbytes length:16]];
+    [[PBPebbleCentral defaultCentral] setDelegate:self];
+
+    
     NSError *setCategoryError = nil;
     if (![session setCategory:AVAudioSessionCategoryPlayback
                   withOptions:AVAudioSessionCategoryOptionMixWithOthers
                         error:&setCategoryError]) {
         // handle error
     }
+    
     return YES;
 }
 							

@@ -7,9 +7,29 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <PebbleKit/PebbleKit.h>
+#import "GraphView.h"
 
-@interface ViewController : UIViewController<UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate>
 
+
+@class GraphView;
+
+@interface ViewController : UIViewController<UITableViewDelegate, UITableViewDataSource, UIAlertViewDelegate>{
+
+    GraphView *graphViewX;
+    GraphView *graphViewY;
+    GraphView *graphViewZ;
+    
+    IBOutlet UIView *viewX;
+    IBOutlet UIView *viewY;
+    IBOutlet UIView *viewZ;
+    
+}
+
+
+@property (strong, nonatomic) GraphView *graphViewX;
+@property (strong, nonatomic) GraphView *graphViewY;
+@property (strong, nonatomic) GraphView *graphViewZ;
 
 @end
 
